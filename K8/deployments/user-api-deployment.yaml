@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-api
+  labels:
+    app: user-api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: user-api
+  template:
+    metadata:
+      labels:
+        app: user-api
+    spec:
+      containers:
+        - name: user-api
+          image: agusting130/user-api:latest
+          ports:
+            - containerPort: 8000
+          env:
+            # Postgres
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: user-db-secret
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: user-db-secret
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: user-db-secret
+                  key: POSTGRES_DB
+            - name: POSTGRES_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: user-api-config
+                  key: POSTGRES_HOST
+            - name: POSTGRES_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: user-api-config
+                  key: POSTGRES_PORT
+            # Keycloak
+            - name: KEYCLOAK_ISSUER
+              value: "http://keycloak:8081/realms/demo-realm"
+            - name: KEYCLOAK_URL
+              value: "http://keycloak:8081/"
+            - name: KEYCLOAK_REALM
+              value: "demo-realm"
+            - name: KEYCLOAK_CLIENT_ID
+              value: "demo-client"
+            - name: KEYCLOAK_CLIENT_SECRET
+              value: "GZUa2kQFL3racxYSPLPUqyuiEKqdIlCh"
+            - name: KEYCLOAK_AUDIENCE
+              value: "http://localhost:8081/realms/demo-realm"
+            - name: KEYCLOAK_PORT
+              value: "8081"
