@@ -80,6 +80,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
     volumes:
       - mongo_data:/data/db
+      - ./PlaylistAPI/mongo-init:/docker-entrypoint-initdb.d
 
 volumes:
   artist-db-data:
