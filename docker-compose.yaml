@@ -3,48 +3,61 @@ services:
   api-gateway:
     build: ./api-gateway
     container_name: api-gateway
+    restart: unless-stopped 
     ports:
-      - "${GATEWAY_PORT}:80"
+      - "${GATEWAY_PORT}:80" 
     depends_on:
       - artist-api
       - user-api
       - playlist-api
+    networks:
+      - app_network 
 
   # API DE ARTISTAS
   artist-api:
     build: ./ArtistAPI
     container_name: artist-api
+    restart: unless-stopped 
     ports:
-      - "${ARTIST_API_PORT}:8080"
+      - "${ARTIST_API_PORT}:8080" 
     env_file:
       - ./ArtistAPI/.env
     depends_on:
       - artist-db
+    networks:
+      - app_network
 
   artist-db:
     image: mysql:8.0
     container_name: artist-db
+    restart: unless-stopped 
     env_file:
       - ./ArtistAPI/.env
     volumes:
       - artist-db-data:/var/lib/mysql
     ports:
-      - "${MYSQL_PORT}:3306"
+      - "${MYSQL_PORT}:3306" 
+    networks:
+      - microservice_net
 
   # API DE USUARIOS
   user-api:
     build: ./UserAPI
     container_name: user-api
+    restart: unless-stopped 
     ports:
       - "${USERS_API_PORT}:8000"
     env_file:
       - ./UserAPI/.env
     depends_on:
       - user-db
+    networks:
+      - microservice_net
 
   user-db:
     image: postgres:17
     container_name: user-db
+    restart: unless-stopped
     env_file:
       - ./UserAPI/.env
     volumes:
@@ -53,6 +66,8 @@ services:
       - ./UserAPI/app:/app
     ports:
       - "${POSTGRES_PORT}:5432"
+    networks:
+      - microservice_net
 
   # API DE PLAYLISTS
   playlist-api:
@@ -60,28 +75,36 @@ services:
       context: ./PlaylistAPI
       dockerfile: Dockerfile
     container_name: playlist-api
-    restart: always
+    restart: unless-stopped 
     ports:
       - "${PLAYLIST_API_PORT}:8080"
     depends_on: [mongo]
     env_file:
-      - ./.env
+      - ./PlaylistAPI/.env
     volumes:
       - ./PlaylistAPI/app:/app
+    networks:
+      - microservice_net
 
   mongo:
     image: mongo:latest
     container_name: mongodb
-    restart: always
+    restart: unless-stopped 
     ports:
-      - "${MONGO_PORT}:27017"
+      - "${MONGO_PORT}:27017" 
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
     volumes:
       - mongo_data:/data/db
+    networks:
+      - microservice_net
 
 volumes:
   artist-db-data:
   user-db-data:
   mongo_data:
+
+networks:
+  microservice_net:
+    driver: bridge 

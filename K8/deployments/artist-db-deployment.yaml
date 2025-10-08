@@ -1,10 +1,12 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: artist-db
   labels:
     app: artist-db
 spec:
+  serviceName: "artist-db"
+  replicas: 1
   selector:
     matchLabels:
       app: artist-db
@@ -24,14 +26,17 @@ spec:
                 secretKeyRef:
                   name: artist-db-secret
                   key: DB_PASS
+            
             - name: MYSQL_DATABASE
               valueFrom:
-                secretKeyRef:
-                  name: artist-db-secret
+                configMapKeyRef:
+                  name: artist-api-config
                   key: DB_NAME
+          
           volumeMounts:
             - name: mysql-persistent-storage
               mountPath: /var/lib/mysql
+      
       volumes:
         - name: mysql-persistent-storage
           persistentVolumeClaim:

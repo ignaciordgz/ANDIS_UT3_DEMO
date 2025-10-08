@@ -5,3 +5,7 @@ metadata:
 data:
   DB_HOST: artist-db
   DB_PORT: "3306"
+
+  DB_NAME: ut2artist
+  DB_DRIVER_PREFIX: jdbc:mysql:// 
+  

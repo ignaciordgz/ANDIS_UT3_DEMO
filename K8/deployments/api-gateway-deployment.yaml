@@ -5,7 +5,7 @@ metadata:
   labels:
     app: api-gateway
 spec:
-  replicas: 3
+  replicas: 2
   selector:
     matchLabels:
       app: api-gateway
@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
         - name: api-gateway
-          image: maurobarrales/api-gateway:latest
+          image: maurobarrales/api-gateway:v4
           ports:
             - containerPort: 80

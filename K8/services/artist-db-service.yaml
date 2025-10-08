@@ -4,7 +4,8 @@ metadata:
   name: artist-db
   labels:
     app: artist-db
-spec:
+spec: 
+  type: ClusterIP
   selector:
     app: artist-db
   ports:

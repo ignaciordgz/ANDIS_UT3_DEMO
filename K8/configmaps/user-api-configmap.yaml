@@ -5,4 +5,4 @@ metadata:
 data:
   POSTGRES_HOST: user-db
   POSTGRES_PORT: "5432"
-
+  POSTGRES_DB: usersdb

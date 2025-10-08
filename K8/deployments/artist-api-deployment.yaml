@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: artist-api
+  name: artist-api-deployment
   labels:
     app: artist-api
 spec:
@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: artist-api
-          image: maurobarrales/artist-api:latest
+          image: maurobarrales/artist-api:v3
           ports:
             - containerPort: 8080
           env:
@@ -32,8 +32,8 @@ spec:
                   key: DB_PASS
             - name: DB_NAME
               valueFrom:
-                secretKeyRef:
-                  name: artist-db-secret
+                configMapKeyRef:
+                  name: artist-api-config
                   key: DB_NAME
             - name: DB_HOST
               valueFrom:
